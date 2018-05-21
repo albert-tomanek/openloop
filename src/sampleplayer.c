@@ -174,6 +174,11 @@ GstElement *sampleplayer_get_element (SamplePlayer *that)
 	return that->bin;
 }
 
+float sampleplayer_get_progress (SamplePlayer *player)
+{
+	return (float) player->playback_offset / (float) player->sample->size;
+}
+
 Sample *sampleplayer_get_sample (SamplePlayer *that)
 {
 	return that->sample;

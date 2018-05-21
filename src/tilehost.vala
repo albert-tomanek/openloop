@@ -11,6 +11,13 @@ class GUI.TileHost : Gtk.DrawingArea
 			TILE_WIDTH + (2 * TILE_BORDER_OFFSET) + (2 * TILE_BORDER_WIDTH)
 		);
 
+		/* Listen for events */
+		this.add_events (
+			Gdk.EventMask.BUTTON_PRESS_MASK
+		);
+
+		this.button_press_event.connect(this.on_click);
+
 		/* Queue a redraw every 50 milliseconds */
 		Timeout.add(50, () => { this.queue_draw(); return true; });
 	}
@@ -59,4 +66,20 @@ class GUI.TileHost : Gtk.DrawingArea
 		context.fill();
 	}
 
+	private bool on_click(Gdk.EventButton event)
+	{print("clicked\n");
+		if (this.tile == null)
+			return false;
+
+		if (this.tile.playing)
+		{
+			this.tile.stop();
+		}
+		else
+		{
+			this.tile.start();
+		}
+
+		return true;	// true to stop other handlers from being invoked for the event.
+	}
 }

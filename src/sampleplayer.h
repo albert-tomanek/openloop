@@ -37,5 +37,6 @@ void sampleplayer_rewind (SamplePlayer *player);
 
 /* Properties */
 GstElement *sampleplayer_get_element (SamplePlayer *player);		// Returns a GStreamer Bin element that encapsulates the sample player and can be put into a pipeline.
+float       sampleplayer_get_progress (SamplePlayer *player);		// Returns how far the player is through the sample as a float between 0 and 1.0
 Sample     *sampleplayer_get_sample ();
 uint64_t    sampleplayer_get_playback_offset ();

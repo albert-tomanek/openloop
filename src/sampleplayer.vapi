@@ -1,6 +1,6 @@
 /* See sampleplayer.h for target struct. */
 
-[CCode (cname="SamplePlayer", free_function = "sampleplayer_free")]
+[CCode (cname="SamplePlayer", free_function = "sampleplayer_free", cheader_filename = "sampleplayer.h")]
 [Compact]
 class OpenLoop.Audio.SamplePlayer
 {
@@ -14,6 +14,7 @@ class OpenLoop.Audio.SamplePlayer
 
 	/* Properties */
 	public  Gst.Element gst_element { [CCode (cname = "sampleplayer_get_element")] get; }
+	public  float progress { [CCode (cname = "sampleplayer_get_progress")] get; }
 	public  unowned OpenLoop.Audio.Sample sample   { [CCode (cname = "sampleplayer_get_sample")] get; }
 	public  uint64 playback_offset  { [CCode (cname = "sampleplayer_get_playback_offset")] get; }
 }
