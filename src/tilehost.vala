@@ -67,7 +67,7 @@ class GUI.TileHost : Gtk.DrawingArea
 	}
 
 	private bool on_click(Gdk.EventButton event)
-	{print("clicked\n");
+	{
 		if (this.tile == null)
 			return false;
 

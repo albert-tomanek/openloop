@@ -10,8 +10,10 @@ typedef struct
 	float *data;
 } Sample;
 
-Sample *sample_load_raw(const char *path, uint32_t samplerate, uint8_t channels);	// Temporary solution.
 void sample_free(Sample *sample);
 
-inline size_t sample_frame_size(Sample *sample) { return (sample->channels * sizeof(float)); };
-inline size_t sample_length(Sample *sample) { return (sample->size / sample_frame_size(sample)); };	// in frames
+Sample *sample_load_raw(const char *path, uint32_t samplerate, uint8_t channels);	// Temporary solution.
+float  *sample_visual_repr (Sample *that, uint16_t width, int *out_length);
+
+size_t sample_frame_size(Sample *sample);
+size_t sample_length(Sample *sample);		// In frames

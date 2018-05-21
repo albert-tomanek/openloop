@@ -20,7 +20,7 @@ class OpenLoop.AppPipeline
 		this.sink         = Gst.ElementFactory.make ("autoaudiosink", null);
 
 		this.pipeline.add_many (this.mixer, this.audioconvert, this.sink);
-		//this.mixer.link_many (this.audioconvert, this.sink);
+		this.mixer.link_many (this.audioconvert, this.sink);
 		this.audioconvert.link(this.sink);
 
 		/* Set the mixer up */
@@ -29,7 +29,7 @@ class OpenLoop.AppPipeline
 		/* Set the message callback */
 		this.pipeline.get_bus().add_watch(GLib.Priority.DEFAULT, this.on_bus_message);
 
-		//this.pipeline.set_state (Gst.State.PLAYING);
+		this.pipeline.set_state (Gst.State.PLAYING);
 	}
 
 	~AppPipeline()
@@ -39,23 +39,25 @@ class OpenLoop.AppPipeline
 
 	public void add(Gst.Element element)
 	{
-		this.pipeline.add(element);
-element.link(this.audioconvert);this.pipeline.set_state (Gst.State.PLAYING);
-/*		Gst.Pad? mixer_sink_pad = this.mixer.request_pad(this.mixer_sink_templ, null, null);	// We request a sink pad from the audiomixer using the pad template that we aquired earlier.
-		Gst.Pad? elem_src_pad   = element.get_static_pad("src");
+		/* Adds an element to the pipeline (links it to the audiomixer) */
 
-		elem_src_pad.link(mixer_sink_pad);*/
-	}
-
-/*	public void remove(Gst.Element element)		!!!
-	{
 		this.pipeline.add(element);
 
 		Gst.Pad? mixer_sink_pad = this.mixer.request_pad(this.mixer_sink_templ, null, null);	// We request a sink pad from the audiomixer using the pad template that we aquired earlier.
 		Gst.Pad? elem_src_pad   = element.get_static_pad("src");
 
 		elem_src_pad.link(mixer_sink_pad);
-	}*/
+		element.set_state(Gst.State.PLAYING);	// Set the element's state to playing like the rest of the pipeline
+	}
+
+	public void remove(Gst.Element element)
+	{
+		/* Removes the element from the pipeline */
+
+		element.set_state(Gst.State.NULL);	// Stop it from streaming data
+		element.unlink(this.mixer);			// This is where it would have been linked to.
+		this.pipeline.remove(element);
+	}
 
 	private bool on_bus_message (Gst.Bus bus, Gst.Message message)
 	{
