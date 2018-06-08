@@ -26,6 +26,8 @@ class LoopTile : Tile
 		this.player.playing = false;
 	}
 
+	public override Gst.Element? gst_element { get { return this.player.gst_element; } }
+
 	public override bool playing { get { return this.player.playing; } }
 
 	public override void draw (Cairo.Context context, uint16 x, uint16 y)
@@ -80,7 +82,7 @@ class LoopTile : Tile
 	private static void draw_progress (LoopTile tile, Cairo.Context context, uint16 x, uint16 y)
 	{
 		/* Draw the progress */
-		context.set_source_rgba(51f/255f, 150f/255f, 255f/255f, 0.5);		// Draw the tile (0, 47, 154)
+		context.set_source_rgba(51f/255f, 150f/255f, 255f/255f, 0.8);		// Draw the tile (0, 47, 154)
 		context.set_line_join(Cairo.LineJoin.MITER);
 
 		context.new_path();

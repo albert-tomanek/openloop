@@ -37,9 +37,10 @@ class OpenLoop.AppPipeline
 		this.pipeline.set_state (Gst.State.NULL);
 	}
 
-	public void add(Gst.Element element)
+	public void add(Gst.Element? element)
 	{
 		/* Adds an element to the pipeline (links it to the audiomixer) */
+		if (element == null) return;
 
 		this.pipeline.add(element);
 
@@ -50,13 +51,29 @@ class OpenLoop.AppPipeline
 		element.set_state(Gst.State.PLAYING);	// Set the element's state to playing like the rest of the pipeline
 	}
 
-	public void remove(Gst.Element element)
+	public void remove(Gst.Element? element)
 	{
 		/* Removes the element from the pipeline */
+		if (element == null) return;
 
-		element.set_state(Gst.State.NULL);	// Stop it from streaming data
-		element.unlink(this.mixer);			// This is where it would have been linked to.
-		this.pipeline.remove(element);
+		element.send_event(new Gst.Event.eos());
+
+		element.get_static_pad("src").add_probe(Gst.PadProbeType.EVENT_DOWNSTREAM, (pad, info) => {
+			Gst.Event? event = info.get_event();
+			if (event == null) return Gst.PadProbeReturn.OK;
+
+			print("A\n");
+			switch (event.type)
+			{
+				case Gst.EventType.EOS:
+					element.set_state(Gst.State.NULL);	// Stop it from streaming data
+					element.unlink(this.mixer);			// This is where it would have been linked to.
+					this.pipeline.remove(element);
+					return Gst.PadProbeReturn.REMOVE;
+			}
+
+			return Gst.PadProbeReturn.OK;
+		});
 	}
 
 	private bool on_bus_message (Gst.Bus bus, Gst.Message message)

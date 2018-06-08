@@ -15,4 +15,5 @@ abstract class Tile
 	public abstract bool playing { get; }
 
 	public abstract void draw (Cairo.Context context, uint16 x, uint16 y);
+	public abstract Gst.Element? gst_element { get; }
 }

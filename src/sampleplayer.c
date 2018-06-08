@@ -26,7 +26,7 @@ SamplePlayer *sampleplayer_new (Sample *sample)
 	that->playback_offset = 0;
 
 	/* Create the GStreamer elements */
-	that->bin        = gst_bin_new ("sampleplayerbin");
+	that->bin        = gst_bin_new (NULL);
 	that->app_source = gst_element_factory_make ("appsrc", NULL);
 
 	/* Link them */

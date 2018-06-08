@@ -1,9 +1,9 @@
 class OpenLoop.App : Gtk.Application
 {
-	AppUI ui;
-	AppPipeline pipeline;		// The GStreamer pipeline that all tiles feed their audio into.
+	internal AppUI ui;
+	internal AppPipeline pipeline;		// The GStreamer pipeline that all tiles feed their audio into.
 
-	Loop loop = new Loop(Audio.Sample.load_raw("../media/wicked dub_f32s.raw", 44100, 2));
+	public Loop loop = new Loop(Audio.Sample.load_raw("../media/wicked dub_f32s.raw", 44100, 2));
 
     public App ()
 	{
@@ -22,13 +22,13 @@ class OpenLoop.App : Gtk.Application
 		this.ui.create();
 
 		/* test tiles */
-		var host1 = new GUI.TileHost();
+		var host1 = new GUI.TileHost(this);
 		var tile  = new LoopTile(loop);
 		this.pipeline.add(tile.player.gst_element);
 		host1.attach(tile);
 		this.ui.grid.attach(host1, 0, 0, 1, 1);
 
-		var host2 = new GUI.TileHost();
+		var host2 = new GUI.TileHost(this);
 		this.ui.grid.attach(host2, 1, 0, 1, 1);
 
 		this.ui.grid.show_all();
