@@ -56,9 +56,7 @@ class OpenLoop.AppPipeline
 		/* Removes the element from the pipeline */
 		if (element == null) return;
 
-		element.send_event(new Gst.Event.eos());
-
-		element.get_static_pad("src").add_probe(Gst.PadProbeType.EVENT_DOWNSTREAM, (pad, info) => {
+		element.get_static_pad("src").add_probe(Gst.PadProbeType.BLOCK, (pad, info) => {
 			Gst.Event? event = info.get_event();
 			if (event == null) return Gst.PadProbeReturn.OK;
 
@@ -74,6 +72,8 @@ class OpenLoop.AppPipeline
 
 			return Gst.PadProbeReturn.OK;
 		});
+
+		element.send_event(new Gst.Event.eos());
 	}
 
 	private bool on_bus_message (Gst.Bus bus, Gst.Message message)

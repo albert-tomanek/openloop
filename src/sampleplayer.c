@@ -121,6 +121,9 @@ void sampleplayer_push_data (GstElement *source, guint size, SamplePlayer *that)
 
 		/* Increment the playback offset, now that these samples will be played */
 		that->playback_offset += num_frames * frame_size;
+
+		GST_BUFFER_OFFSET (buffer)     = that->playback_offset;
+		GST_BUFFER_OFFSET_END (buffer) = that->playback_offset + chunk_size;		// The offset in the file of the end of that BUFFER
 	}
 	else
 	{
@@ -140,9 +143,6 @@ void sampleplayer_push_data (GstElement *source, guint size, SamplePlayer *that)
 
 	gst_buffer_append_memory (buffer, sample_data);
 
-	/* Set its timestamp and duration */
-	GST_BUFFER_OFFSET (buffer)     = that->playback_offset;
-	GST_BUFFER_OFFSET_END (buffer) = that->playback_offset + chunk_size;		// The offset in the file of the end of that BUFFER
 
 	/* Push the buffer into the appsrc */
 	{
