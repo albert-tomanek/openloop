@@ -56,24 +56,10 @@ class OpenLoop.AppPipeline
 		/* Removes the element from the pipeline */
 		if (element == null) return;
 
-		element.get_static_pad("src").add_probe(Gst.PadProbeType.BLOCK, (pad, info) => {
-			Gst.Event? event = info.get_event();
-			if (event == null) return Gst.PadProbeReturn.OK;
-
-			print("A\n");
-			switch (event.type)
-			{
-				case Gst.EventType.EOS:
-					element.set_state(Gst.State.NULL);	// Stop it from streaming data
-					element.unlink(this.mixer);			// This is where it would have been linked to.
-					this.pipeline.remove(element);
-					return Gst.PadProbeReturn.REMOVE;
-			}
-
-			return Gst.PadProbeReturn.OK;
-		});
-
-		element.send_event(new Gst.Event.eos());
+		element.set_state(Gst.State.NULL);
+		this.mixer.release_request_pad(element.get_static_pad("src").get_peer());
+		element.unlink(this.mixer);			// This is where it would have been linked to.
+		this.pipeline.remove(element);
 	}
 
 	private bool on_bus_message (Gst.Bus bus, Gst.Message message)

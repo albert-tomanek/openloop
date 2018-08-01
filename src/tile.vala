@@ -8,7 +8,7 @@ static uint16 TILE_BORDER_WIDTH  = 2;	// How wide the tile border is
 
 abstract class Tile
 {
-	//private GUI.TileHost? host;
+	public weak GUI.TileHost? host;
 
 	public abstract void start();
 	public abstract void stop();

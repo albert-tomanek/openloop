@@ -21,5 +21,11 @@ executable('openloop',
 		dependency('gstreamer-1.0'),
 		dependency('gstreamer-audio-1.0')
 	],
-	include_directories: include_directories('src/')	# We need to tell the C compiler where it can find the headers that the .vapi's refer to
+	include_directories: include_directories('src/'),	# We need to tell the C compiler where it can find the headers that the .vapi's refer to
+	c_args: [
+		'-Wno-discarded-qualifiers',
+		'-Wno-unused-but-set-variable',
+		'-Wno-unused-variable',
+		'-Wno-unused-function',
+	],
 )
