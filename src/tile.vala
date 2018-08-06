@@ -5,9 +5,11 @@ static uint16 TILE_HEIGHT = 96;
 static uint16 TILE_CORNER_RADIUS = 6;
 static uint16 TILE_BORDER_OFFSET = 4;	// How many pixels between the tile and its border
 static uint16 TILE_BORDER_WIDTH  = 2;	// How wide the tile border is
+static uint16 TILE_SPACING = 12;
 
-abstract class Tile
+abstract class OpenLoop.Tile
 {
+	public OpenLoop.AppPipeline pipeline;
 	public weak GUI.TileHost? host;
 
 	public abstract void start();

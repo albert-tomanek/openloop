@@ -2,9 +2,11 @@ using OpenLoop;
 
 class GUI.TileHost : Gtk.DrawingArea
 {
-	private weak OpenLoop.App app;
+	public Section? section;
+
 	private Tile? tile = null;
 
+	/* Gtk stuff */
 	private enum DndTargetType {
 		TILE_PTR
 	}
@@ -13,12 +15,10 @@ class GUI.TileHost : Gtk.DrawingArea
 		{"com.github.albert-tomanek.openloop.tile.instance_ptr", 0, TileHost.DndTargetType.TILE_PTR}
 	};
 
-	private bool tile_being_dragged = false;	// Only true when the widget is hosting a tile, and that tile is currently being dragged away from it.
+	private bool tile_being_dragged = false;
 
-	public TileHost(OpenLoop.App instance)
+	public TileHost()
 	{
-		this.app = instance;
-
 		this.set_size_request(
 			TILE_WIDTH + (2 * TILE_BORDER_OFFSET) + (2 * TILE_BORDER_WIDTH),
 			TILE_WIDTH + (2 * TILE_BORDER_OFFSET) + (2 * TILE_BORDER_WIDTH)
@@ -52,10 +52,16 @@ class GUI.TileHost : Gtk.DrawingArea
 	{
 		this.tile = tile;
 		tile.host = this;
+
+		if (this.section != null)
+			this.section.add(tile);
 	}
 
 	public void release()
 	{
+		if (this.section != null)
+			this.section.remove(this.tile);
+
 		this.tile.host = null;
 		this.tile = null;
 	}
@@ -96,7 +102,7 @@ class GUI.TileHost : Gtk.DrawingArea
 		{
 			var item_delete_tile = new Gtk.MenuItem.with_mnemonic("_Delete tile");
 			item_delete_tile.activate.connect(() => {
-				this.app.pipeline.remove(this.tile.gst_element);
+				this.tile.pipeline.remove(this.tile.gst_element);
 				this.release();
 			});
 			context_menu.append(item_delete_tile);
@@ -105,8 +111,8 @@ class GUI.TileHost : Gtk.DrawingArea
 		{
 			var item_add_tile = new Gtk.MenuItem.with_mnemonic("_Add tile");
 			item_add_tile.activate.connect(() => {
-				this.attach(new LoopTile(this.app.loop));
-				this.app.pipeline.add(this.tile.gst_element);
+				this.attach(new LoopTile(app_pipeline, test_loop));
+				this.tile.pipeline.add(this.tile.gst_element);
 			});
 			context_menu.append(item_add_tile);
 		}

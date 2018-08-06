@@ -2,7 +2,7 @@
 
 class OpenLoop.Loop
 {
-	public OpenLoop.Audio.Sample orig_sample;	// ERROR HERE. The fact that it's in a .vapi causes it to include "appui.h" for some reason.
+	public OpenLoop.Audio.Sample orig_sample;
 
 	public Loop (owned OpenLoop.Audio.Sample sample)
 	{

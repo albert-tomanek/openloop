@@ -7,8 +7,9 @@ class LoopTile : Tile
 
 	private float[] repr;
 
-	public LoopTile (OpenLoop.Loop loop)
+	public LoopTile (OpenLoop.AppPipeline pipeline, OpenLoop.Loop loop)
 	{
+		this.pipeline = pipeline;
 		this.loop = loop;
 		this.player = new Audio.SamplePlayer (this.loop.orig_sample);
 
