@@ -7,7 +7,7 @@ static uint16 TILE_BORDER_OFFSET = 4;	// How many pixels between the tile and it
 static uint16 TILE_BORDER_WIDTH  = 2;	// How wide the tile border is
 static uint16 TILE_SPACING = 12;
 
-abstract class OpenLoop.Tile
+abstract class OpenLoop.Tile : Object
 {
 	public OpenLoop.AppPipeline pipeline;
 	public weak GUI.TileHost? host;

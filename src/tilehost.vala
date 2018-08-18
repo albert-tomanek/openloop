@@ -7,12 +7,12 @@ class GUI.TileHost : Gtk.DrawingArea
 	private Tile? tile = null;
 
 	/* Gtk stuff */
-	private enum DndTargetType {
+	public enum DndTargetType {
 		TILE_PTR
 	}
 
-	private static const Gtk.TargetEntry[] gtk_targetentries = {
-		{"com.github.albert-tomanek.openloop.tile.instance_ptr", 0, TileHost.DndTargetType.TILE_PTR}
+	public static const Gtk.TargetEntry[] gtk_targetentries = {
+		{"com.github.albert-tomanek.openloop.tile.instance_ptr", Gtk.TargetFlags.SAME_APP, TileHost.DndTargetType.TILE_PTR}
 	};
 
 	private bool tile_being_dragged = false;
@@ -139,6 +139,7 @@ class GUI.TileHost : Gtk.DrawingArea
 		switch (target_type)
 		{
 			case TileHost.DndTargetType.TILE_PTR:
+				this.tile.@ref();					// Manually increase the reference count to account for the pointer that we're sending as the selection data.
 				Tile[] _tile = {this.tile};
 				selection_data.set(selection_data.get_target(), (int) sizeof(void *) * 8, (uint8[])(_tile));
 				break;
@@ -148,6 +149,15 @@ class GUI.TileHost : Gtk.DrawingArea
 	}
 
 	/* Drag and drop -- destination callbacks */
+	private static Gdk.Atom? find_atom_with_name(string name, List<Gdk.Atom> list)
+	{
+		foreach (var atom in list)
+		{
+			if (atom.name() == name) return atom;
+		}
+
+		return null;
+	}
 
 	private bool on_drag_drop (Gtk.Widget widget, Gdk.DragContext context, int x, int y, uint time)
 	{
@@ -156,15 +166,17 @@ class GUI.TileHost : Gtk.DrawingArea
 
 		if (context.list_targets() == null) return false;
 
-		var target_type = (Gdk.Atom) context.list_targets().nth_data(TileHost.DndTargetType.TILE_PTR);
+		Gdk.Atom? target_type = find_atom_with_name("com.github.albert-tomanek.openloop.tile.instance_ptr", context.list_targets());	//.nth_data(TileHost.DndTargetType.TILE_PTR);
+
+		if (target_type == null) return false;	// No compatable target type
 
 		/* Request the data from the source. */
 		Gtk.drag_get_data (
-				widget,         // will receive 'drag_data_received' signal
-				context,        // represents the current state of the DnD
-				target_type,    // the target type we want
-				time            // time stamp
-			);
+			widget,         // will receive 'drag_data_received' signal
+			context,        // represents the current state of the DnD
+			target_type,    // the target type we want
+			time            // time stamp
+		);
 
 		return true;
 	}
@@ -176,13 +188,11 @@ class GUI.TileHost : Gtk.DrawingArea
         /* Deal with what we are given from source */
         if (selection_data.get_length() >= 0)
 		{
-            if (context.get_suggested_action() == Gdk.DragAction.MOVE)
-				delete_source = true;
-
             switch (target_type) {
 				case TileHost.DndTargetType.TILE_PTR:
 				{
 					Tile tile = ((Tile[]) selection_data.get_data())[0];
+					tile.unref();
 
 					if (tile.host != null)			// WARNING: The tile will be removed from its old host regardless of whether `context.get_suggested_action() == Gdk.DragAction.MOVE` or not.
 						tile.host.release();

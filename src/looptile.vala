@@ -5,7 +5,7 @@ class LoopTile : Tile
 	private Loop loop;
 	public  Audio.SamplePlayer player;
 
-	private float[] repr;
+	private float[] repr;	// A visual representation of the sample as values between -1 and 1 (?)
 
 	public LoopTile (OpenLoop.AppPipeline pipeline, OpenLoop.Loop loop)
 	{

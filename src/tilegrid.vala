@@ -1,6 +1,6 @@
 using OpenLoop;
 
-class OpenLoop.TileGrid : Gtk.Grid
+class GUI.TileGrid : Gtk.Grid
 {
 	private uint width;
 	private uint height;

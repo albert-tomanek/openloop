@@ -2,6 +2,10 @@
 
 class OpenLoop.Loop
 {
+	/* Metadata */
+	public string name;
+
+	/* Samples */
 	public OpenLoop.Audio.Sample orig_sample;
 
 	public Loop (owned OpenLoop.Audio.Sample sample)
