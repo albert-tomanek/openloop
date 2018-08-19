@@ -41,7 +41,7 @@ class LoopTile : Tile
 	private static void draw_tile (LoopTile tile, Cairo.Context context, uint16 x, uint16 y)
 	{
 		/* Draw the actual tile */
-		context.set_source_rgb(18f/255f, 71f/255f, 128f/255f);		// Draw the tile (0, 47, 154)
+		Colours.set_context_rgb(context, Colours.DARK_BLUE);
 		context.set_line_join(Cairo.LineJoin.ROUND);
 
 		context.new_path();
@@ -63,7 +63,7 @@ class LoopTile : Tile
 		/* Draw a representation of the sample's waveform */
 		uint16 center_y = y + (TILE_HEIGHT / 2);
 
-		context.set_source_rgb (1.0, 1.0, 1.0);
+		Colours.set_context_rgb(context, (uint32) 0xffffffff);
 		context.set_line_join (Cairo.LineJoin.ROUND);
 
 		context.new_path ();
@@ -83,9 +83,9 @@ class LoopTile : Tile
 	private static void draw_progress (LoopTile tile, Cairo.Context context, uint16 x, uint16 y)
 	{
 		/* Draw the progress */
-		context.set_source_rgba(51f/255f, 150f/255f, 255f/255f, 0.8);		// Draw the tile (0, 47, 154)
+		Colours.set_context_rgb(context, Colours.LIGHT_BLUE);
 		context.set_line_join(Cairo.LineJoin.MITER);
-
+		
 		context.new_path();
 		context.move_to(x + TILE_CORNER_RADIUS, y + TILE_HEIGHT);
 
@@ -103,4 +103,8 @@ class LoopTile : Tile
 	{
 	}
 
+	public override void draw_border (Cairo.Context context, uint16 x, uint16 y)
+	{
+		this.draw_border_with_colour(context, x, y, Colours.LIGHT_BLUE);
+	}
 }

@@ -7,6 +7,7 @@ executable('openloop',
 		'src/section.vala',
 		'src/tile.vala',
 		'src/looptile.vala',
+		'src/colours.vala',
 
 		'src/pipeline.vala',
 		'src/sample.vapi',

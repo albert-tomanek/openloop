@@ -2,6 +2,7 @@
 
 using OpenLoop;
 
-class OpenLoop.Section : Gee.ArrayList<Tile>
+class OpenLoop.Section
 {
+	public Gee.ArrayList<GUI.TileHost> tile_hosts = new Gee.ArrayList<GUI.TileHost>();
 }

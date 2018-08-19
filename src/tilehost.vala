@@ -2,7 +2,8 @@ using OpenLoop;
 
 class GUI.TileHost : Gtk.DrawingArea
 {
-	public Section? section;
+	public weak TileGrid grid;
+	public weak Section? section;
 
 	private Tile? tile = null;
 
@@ -17,8 +18,10 @@ class GUI.TileHost : Gtk.DrawingArea
 
 	private bool tile_being_dragged = false;
 
-	public TileHost()
+	public TileHost(TileGrid grid)
 	{
+		this.grid = grid;
+
 		this.set_size_request(
 			TILE_WIDTH + (2 * TILE_BORDER_OFFSET) + (2 * TILE_BORDER_WIDTH),
 			TILE_WIDTH + (2 * TILE_BORDER_OFFSET) + (2 * TILE_BORDER_WIDTH)
@@ -52,16 +55,10 @@ class GUI.TileHost : Gtk.DrawingArea
 	{
 		this.tile = tile;
 		tile.host = this;
-
-		if (this.section != null)
-			this.section.add(tile);
 	}
 
 	public void release()
 	{
-		if (this.section != null)
-			this.section.remove(this.tile);
-
 		this.tile.host = null;
 		this.tile = null;
 	}
@@ -70,18 +67,31 @@ class GUI.TileHost : Gtk.DrawingArea
 
 	private bool on_click(Gdk.EventButton event)
 	{
+		Gdk.ModifierType mods;
+
 		switch (event.button)
 		{
 			case 1:
 				if (this.tile != null)
 				{
-					if (this.tile.playing)
+					event.get_state(out mods);
+					if ((mods & Gdk.ModifierType.CONTROL_MASK) != 0)
 					{
-						this.tile.stop();
+						/* Control-click to select */
+						if (this.tile != null)
+							this.tile.selected = !this.tile.selected;
 					}
 					else
 					{
-						this.tile.start();
+						/* Normal click to stop/start */
+						if (this.tile.playing)
+						{
+							this.tile.stop();
+						}
+						else
+						{
+							this.tile.start();
+						}
 					}
 				}
 				break;
@@ -102,24 +112,27 @@ class GUI.TileHost : Gtk.DrawingArea
 		{
 			var item_delete_tile = new Gtk.MenuItem.with_mnemonic("_Delete tile");
 			item_delete_tile.activate.connect(() => {
-				this.tile.pipeline.remove(this.tile.gst_element);
-				this.release();
+				if (this.grid.selected.size > 0)
+				{
+					foreach (Tile tile in this.grid.selected)
+					{
+						tile.die();
+					}
+
+					this.grid.selected.clear();
+				}
+				else
+				{
+					this.tile.die();
+				}
 			});
 			context_menu.append(item_delete_tile);
-		}
-		else
-		{
-			var item_add_tile = new Gtk.MenuItem.with_mnemonic("_Add tile");
-			item_add_tile.activate.connect(() => {
-				this.attach(new LoopTile(app_pipeline, test_loop));
-				this.tile.pipeline.add(this.tile.gst_element);
-			});
-			context_menu.append(item_add_tile);
+
+			context_menu.show_all();
+			context_menu.popup(null, this, null, 0, event.get_time());
+			//context_menu.popup_at_pointer(event);		// FIXME: GTK
 		}
 
-		context_menu.show_all();
-		context_menu.popup(null, this, null, 0, event.get_time());
-		//context_menu.popup_at_pointer(event);		// FIXME: GTK
 	}
 
 	/* Drag and drop -- source callbacks */
@@ -217,6 +230,9 @@ class GUI.TileHost : Gtk.DrawingArea
 		if (this.tile != null/* && !this.tile_being_dragged*/)
 		{
 			this.tile.draw(context, TILE_BORDER_WIDTH + TILE_BORDER_OFFSET, TILE_BORDER_WIDTH + TILE_BORDER_OFFSET);
+
+			if (this.tile.selected)
+				this.tile.draw_border(context, TILE_BORDER_WIDTH + TILE_BORDER_OFFSET, TILE_BORDER_WIDTH + TILE_BORDER_OFFSET);
 		}
 		else
 		{
@@ -246,29 +262,3 @@ class GUI.TileHost : Gtk.DrawingArea
 		context.fill();
 	}
 }
-/*
-private uint8[] tile_ptr_to_bytes(Tile *ptr)
-{
-	uint8[] bytes = new uint8[sizeof(Tile *)];
-
-	for (int i = 0; i < sizeof(Tile *); i++) {
-		bytes[i] = (uint8) (ptr & 0xFF);
-		ptr = (Tile *)((uint64) ptr >> 8);
-	}
-
-	return bytes;
-}
-
-private Tile *tile_ptr_from_bytes(uint8[] bytes)
-{
-	Tile *ptr = (Tile *) 0;
-
-	for (int i = 0; i < sizeof(Tile *); i++)
-	{
-		ptr = (Tile *)(ptr & ~((uint64) 0xff)) | bytes[i];		// Aargh pointer arithmetic is messy in Vala!
-		ptr = (Tile *)((uint64) ptr << 8);
-	}
-
-	return ptr;
-}
-*/
