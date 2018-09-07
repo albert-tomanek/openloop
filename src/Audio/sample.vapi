@@ -10,6 +10,9 @@ class OpenLoop.Audio.Sample
 
 	public ulong length     { [CCode (cname = "sample_length")] get; }
 
+	[CCode (cname = "sample_new")]
+	public Sample();
+
 	[CCode (cname = "sample_load_raw")]
 	public static Sample load_raw (string path, uint32 samplerate, uint8 channels);
 

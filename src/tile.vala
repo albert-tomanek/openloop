@@ -74,6 +74,7 @@ abstract class OpenLoop.Tile : Object
 		/* This should clear all references to the	*
 		 * tile and therefore cause it to be freed. */
 
+		this.gst_element.set_state(Gst.State.NULL);
 		App.pipeline.remove(this.gst_element);
 
 		if (this.host != null)

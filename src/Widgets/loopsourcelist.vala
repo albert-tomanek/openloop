@@ -9,20 +9,13 @@ class OpenLoop.GUI.LoopSourceList : Granite.Widgets.SourceList
 
 		/* Drag and Drop source */
 		this.enable_drag_source(TileHost.gtk_targetentries);
-
-		/* Test sample */
-		{
-			var test_loop = new Loop(OpenLoop.Audio.Sample.load_raw("../media/wicked dub_f32s.raw", 44100, 2));
-			var test_loop_item = new LoopSourceItem("", "Test Loop");
-			test_loop_item.loop = test_loop;
-			this.root.add(test_loop_item);
-		}
 	}
 
 	public void add_path(string path)
 	{
 		var item = new LoopSourceItem(path);
 		this.root.add(item);
+		item.loop = Loop.import_path(path);
 	}
 }
 
@@ -35,6 +28,9 @@ class OpenLoop.GUI.LoopSourceItem : Granite.Widgets.SourceList.Item, Granite.Wid
 	{
 		base(name ?? path);
 		this.file_path = path;
+
+		this.editable = true;
+		this.edited.connect((name) => {this.name = name;});
 	}
 
 	public bool draggable()
@@ -47,7 +43,7 @@ class OpenLoop.GUI.LoopSourceItem : Granite.Widgets.SourceList.Item, Granite.Wid
 		if (this.loop == null)
 		{
 			/* Load the loop if it hasn't been loaded yet. */
-			this.loop = Loop.load_path(this.file_path);
+			this.loop = Loop.import_path(this.file_path);
 			return;
 		}
 

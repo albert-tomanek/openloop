@@ -1,12 +1,45 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "sample.h"
+
+#define GROW_SIZE 262144	// Grow the sample by 256k every time data is appended to it
+
+Sample *sample_new()
+{
+	Sample *sample = malloc(sizeof(Sample));
+
+	sample->samplerate = 0;
+	sample->channels   = 0;
+	sample->size       = 0;
+	sample->allocated  = 0;
+
+	sample->data = NULL;
+
+	return sample;
+}
 
 void sample_free(Sample *sample)
 {
 	free(sample->data);
 	free(sample);
+}
+
+void sample_append(Sample *sample, float *data, size_t size)
+{
+	/* Append sample data to the sample */
+
+	/* Grow if more space is needed */
+	while (sample->size + size > sample->allocated)
+	{
+		sample->data = realloc(sample->data, sample->allocated + GROW_SIZE);
+		sample->allocated += GROW_SIZE;
+	}
+
+	/* Copy the data in */
+	memcpy(((uint8_t *) sample->data) + sample->size, data, size);
+	sample->size += size;
 }
 
 Sample *sample_load_raw(const char *path, uint32_t samplerate, uint8_t channels)
@@ -22,6 +55,7 @@ Sample *sample_load_raw(const char *path, uint32_t samplerate, uint8_t channels)
 	/* Go to the end of the file to get its length */
 	fseek(file, 0L, SEEK_END);
 	sample->size = ftell(file);
+	sample->allocated = sample->size;
 
 	rewind(file);
 

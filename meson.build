@@ -23,6 +23,8 @@ executable('openloop',
 		'src/Audio/sample.c',
 		'src/Audio/sampleplayer.vapi',
 		'src/Audio/sampleplayer.c',
+		'src/Audio/samplesink.vapi',
+		'src/Audio/samplesink.c',
 	],
 	dependencies: [
 		dependency('glib-2.0'),

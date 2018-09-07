@@ -6,15 +6,42 @@ class OpenLoop.Loop
 	public string name;
 
 	/* Samples */
-	public OpenLoop.Audio.Sample orig_sample;
+	public Audio.Sample orig_sample;
 
-	public Loop (owned OpenLoop.Audio.Sample sample)
+	public Loop (owned Audio.Sample sample)
 	{
 		this.orig_sample = (owned) sample;		// Take ownership of the sample -- it's being given to us to keep.
 	}
 
-	public static Loop load_path(string path)
+	public static Loop import_path(string path)
 	{
-		return new Loop(OpenLoop.Audio.Sample.load_raw(path, 44100, 2));
+		Audio.Sample sample = new Audio.Sample();
+
+		{
+			Gst.Pipeline pipeline = new Gst.Pipeline(null);
+			Gst.Element uridecodebin, audioresample, audioconvert, samplesink;
+
+			/* Create elements */
+			uridecodebin  = Gst.ElementFactory.make ("uridecodebin", null);
+			uridecodebin.set("uri", "file://" + path);
+			audioresample = Gst.ElementFactory.make ("audioresample", null);
+			audioconvert  = Gst.ElementFactory.make ("audioconvert", null);
+			samplesink    = new Audio.SampleSink (sample);
+
+			/* Link elements */
+			pipeline.add_many(uridecodebin, audioresample, audioconvert, samplesink);
+			audioresample.link_many(audioconvert, samplesink);
+
+			uridecodebin.pad_added.connect((pad) => {pad.link(audioresample.get_static_pad("sink"));});
+
+			pipeline.set_state(Gst.State.PLAYING);
+//			pipeline.get_bus().message.connect((msg) => {print(Gst.MessageType.get_name(msg.type)+"\n"); if (msg.type == Gst.MessageType.ERROR) {Error error;string dbg; msg.parse_error(out  error, out dbg); print(error.message+"\n"+dbg+"\n");} });
+
+			pipeline.get_bus().poll(Gst.MessageType.EOS, Gst.CLOCK_TIME_NONE);
+			print("Loading finished.\n");
+			pipeline.set_state(Gst.State.NULL);
+		}
+
+		return new Loop((owned) sample);
 	}
 }
