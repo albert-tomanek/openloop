@@ -1,4 +1,3 @@
-OpenLoop.Loop test_loop;
 weak OpenLoop.AppPipeline app_pipeline;
 
 class OpenLoop.App : Gtk.Application
@@ -17,10 +16,6 @@ class OpenLoop.App : Gtk.Application
 		this.pipeline = new AppPipeline();
 		app_pipeline = this.pipeline;
 		this.pipeline.error.connect((msg) => { stderr.printf(msg); });
-
-		/* Globals */
-		test_loop = new OpenLoop.Loop(OpenLoop.Audio.Sample.load_raw("../media/wicked dub_f32s.raw", 44100, 2));
-		test_loop.name = "Test Loop";
     }
 
     protected override void activate ()

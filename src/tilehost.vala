@@ -1,6 +1,4 @@
-using OpenLoop;
-
-class GUI.TileHost : Gtk.DrawingArea
+class OpenLoop.GUI.TileHost : Gtk.DrawingArea
 {
 	public weak TileGrid grid;
 	public weak Section? section;

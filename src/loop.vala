@@ -12,4 +12,9 @@ class OpenLoop.Loop
 	{
 		this.orig_sample = (owned) sample;		// Take ownership of the sample -- it's being given to us to keep.
 	}
+
+	public static Loop load_path(string path)
+	{
+		return new Loop(OpenLoop.Audio.Sample.load_raw(path, 44100, 2));
+	}
 }

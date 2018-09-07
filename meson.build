@@ -2,12 +2,14 @@ project('openloop', 'vala', 'c')
 
 executable('openloop',
 	sources: [
+		'src/colours.vala',
+		'src/mimetypes.vala',
+
 		'src/main.vala',
 		'src/loop.vala',
 		'src/section.vala',
 		'src/tile.vala',
 		'src/looptile.vala',
-		'src/colours.vala',
 
 		'src/pipeline.vala',
 		'src/sample.vapi',
@@ -17,6 +19,7 @@ executable('openloop',
 
 		'src/appui.vala',
 		'src/loopsourcelist.vala',
+		'src/bottombar.vala',
 		'src/tilegrid.vala',
 		'src/tilehost.vala',
 	],

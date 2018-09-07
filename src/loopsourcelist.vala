@@ -1,8 +1,8 @@
-using OpenLoop;
-
-class GUI.LoopSourceList : Granite.Widgets.SourceList
+class OpenLoop.GUI.LoopSourceList : Granite.Widgets.SourceList
 {
 	private weak OpenLoop.App app;
+
+	public Gee.ArrayList<Loop> loops = new Gee.ArrayList<Loop>();
 
 	public LoopSourceList(OpenLoop.App instance)
 	{
@@ -12,25 +12,33 @@ class GUI.LoopSourceList : Granite.Widgets.SourceList
 		/* Drag and Drop source */
 		this.enable_drag_source(TileHost.gtk_targetentries);
 
-		/* Initial tile */
+		/* Test sample */
 		{
-			var test_loop_item = new LoopSourceItem("Test loop", this.app.pipeline);
+			var test_loop = new Loop(OpenLoop.Audio.Sample.load_raw("../media/wicked dub_f32s.raw", 44100, 2));
+			var test_loop_item = new LoopSourceItem("", this.app.pipeline, "Test Loop");
 			test_loop_item.loop = test_loop;
 			this.root.add(test_loop_item);
 		}
 	}
+
+	public void add_path(string path)
+	{
+		var item = new LoopSourceItem(path, this.app.pipeline);
+		this.root.add(item);
+	}
 }
 
-class GUI.LoopSourceItem : Granite.Widgets.SourceList.Item, Granite.Widgets.SourceListDragSource
+class OpenLoop.GUI.LoopSourceItem : Granite.Widgets.SourceList.Item, Granite.Widgets.SourceListDragSource
 {
 	public string file_path;
-	public Loop?  loop;			// A reference to the loop if it has already been loaded from a file.
+	public Loop?  loop = null;			// A reference to the loop if it has already been loaded from a file. TODO: This reference the loop sample in memory, even if it is not being played anywhere.
 
 	private OpenLoop.AppPipeline _pipeline;		// TODO: Uhh. Why can't we access the parent SourceList to get the pipeline when we `prepare_selection_data`?
 
-	public LoopSourceItem(string name, OpenLoop.AppPipeline pipeline)
+	public LoopSourceItem(string path, OpenLoop.AppPipeline pipeline, string? name = null)
 	{
-		base(name);
+		base(name ?? path);
+		this.file_path = path;
 		this._pipeline = pipeline;
 	}
 
@@ -41,9 +49,10 @@ class GUI.LoopSourceItem : Granite.Widgets.SourceList.Item, Granite.Widgets.Sour
 
 	public void prepare_selection_data (Gtk.SelectionData selection_data)
 	{
-		if (loop == null)
+		if (this.loop == null)
 		{
-			GLib.printerr("Error: loading loops not implementd yet.\n");
+			/* Load the loop if it hasn't been loaded yet. */
+			this.loop = Loop.load_path(this.file_path);
 			return;
 		}
 
