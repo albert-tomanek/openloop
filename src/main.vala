@@ -1,6 +1,6 @@
 class OpenLoop.App : Gtk.Application
 {
-	public static AppUI ui;
+	public static MainWindow ui;
 	public static AppPipeline pipeline;		// The GStreamer pipeline that all tiles feed their audio into.
 
     public App ()
@@ -10,7 +10,7 @@ class OpenLoop.App : Gtk.Application
             flags: ApplicationFlags.FLAGS_NONE
         );
 
-		App.ui = new AppUI();
+		App.ui = new MainWindow();
 		App.pipeline = new AppPipeline();
 		App.pipeline.error.connect((msg) => { stderr.printf(msg); });
     }

@@ -1,4 +1,4 @@
-class OpenLoop.AppUI
+class OpenLoop.MainWindow
 {
 	private Gtk.ApplicationWindow root;
 	private Gtk.Paned paned;
@@ -7,7 +7,7 @@ class OpenLoop.AppUI
 	private GUI.TileGrid tile_grid;
 	private GUI.BottomBar bottom_bar;
 
-	public AppUI ()
+	public MainWindow ()
 	{
 	}
 

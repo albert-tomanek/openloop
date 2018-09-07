@@ -39,4 +39,16 @@ class OpenLoop.GUI.TileGrid : Gtk.Grid
 
 		return true;
 	}
+
+	public Gee.ArrayList<weak Tile> get_selection(Tile? clicked = null)		// The `clicked` argument can be used to add the tile that was right-clicked to the list, even if it wasn't selected.
+	{
+		var ret = new Gee.ArrayList<weak Tile>();
+
+		ret.add_all(this.selected);
+
+		if (clicked != null)
+			ret.add(clicked);
+
+		return ret;
+	}
 }

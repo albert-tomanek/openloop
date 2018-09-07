@@ -11,17 +11,18 @@ executable('openloop',
 		'src/tile.vala',
 		'src/looptile.vala',
 
-		'src/pipeline.vala',
-		'src/sample.vapi',
-		'src/sample.c',
-		'src/sampleplayer.vapi',
-		'src/sampleplayer.c',
+		'src/Views/mainwindow.vala',
 
-		'src/appui.vala',
-		'src/loopsourcelist.vala',
-		'src/bottombar.vala',
-		'src/tilegrid.vala',
-		'src/tilehost.vala',
+		'src/Widgets/loopsourcelist.vala',
+		'src/Widgets/bottombar.vala',
+		'src/Widgets/tilegrid.vala',
+		'src/Widgets/tilehost.vala',
+
+		'src/Audio/pipeline.vala',
+		'src/Audio/sample.vapi',
+		'src/Audio/sample.c',
+		'src/Audio/sampleplayer.vapi',
+		'src/Audio/sampleplayer.c',
 	],
 	dependencies: [
 		dependency('glib-2.0'),
@@ -32,7 +33,7 @@ executable('openloop',
 		dependency('gstreamer-1.0'),
 		dependency('gstreamer-audio-1.0'),
 	],
-	include_directories: include_directories('src/'),	# We need to tell the C compiler where it can find the headers that the .vapi's refer to
+	include_directories: include_directories('src/Audio/'),	# We need to tell the C compiler where it can find the headers that the .vapi's refer to
 	c_args: [
 		'-Wno-deprecated-declarations',
 		'-Wno-discarded-qualifiers',

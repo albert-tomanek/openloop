@@ -53,7 +53,7 @@ class OpenLoop.GUI.LoopSourceItem : Granite.Widgets.SourceList.Item, Granite.Wid
 
 		/* Create a new tile with this loop */
 		Tile tile = new LoopTile(this.loop);
-		tile.pipeline.add(tile.gst_element);
+		App.pipeline.add(tile.gst_element);
 		tile.@ref();	// We need to manually increase the reference cound of the tile because Vala doesn't know that we're keeping a pointer to it when we send it over to the other widget.
 
 		/* Send a pointer to it */

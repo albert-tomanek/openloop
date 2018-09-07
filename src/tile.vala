@@ -9,7 +9,6 @@ static uint16 TILE_SPACING = 4;
 
 abstract class OpenLoop.Tile : Object
 {
-	public OpenLoop.AppPipeline pipeline;
 	public weak GUI.TileHost? host;
 
 	public abstract Gst.Element? gst_element { get; }
@@ -75,7 +74,7 @@ abstract class OpenLoop.Tile : Object
 		/* This should clear all references to the	*
 		 * tile and therefore cause it to be freed. */
 
-		this.pipeline.remove(this.gst_element);
+		App.pipeline.remove(this.gst_element);
 
 		if (this.host != null)
 			this.host.release();

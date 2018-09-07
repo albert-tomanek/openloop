@@ -110,19 +110,12 @@ class OpenLoop.GUI.TileHost : Gtk.DrawingArea
 		{
 			var item_delete_tile = new Gtk.MenuItem.with_mnemonic("_Delete tile");
 			item_delete_tile.activate.connect(() => {
-				if (this.grid.selected.size > 0)
+				foreach (Tile tile in this.grid.get_selection(this.tile))
 				{
-					foreach (Tile tile in this.grid.selected)
-					{
-						tile.die();
-					}
+					tile.die();
+				}
 
-					this.grid.selected.clear();
-				}
-				else
-				{
-					this.tile.die();
-				}
+				this.grid.selected.clear();
 			});
 			context_menu.append(item_delete_tile);
 
