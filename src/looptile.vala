@@ -7,9 +7,8 @@ class LoopTile : Tile
 
 	private float[] repr;	// A visual representation of the sample as values between -1 and 1 (?)
 
-	public LoopTile (OpenLoop.AppPipeline pipeline, OpenLoop.Loop loop)
+	public LoopTile (OpenLoop.Loop loop)
 	{
-		this.pipeline = pipeline;
 		this.loop = loop;
 		this.player = new Audio.SamplePlayer (this.loop.orig_sample);
 
@@ -85,7 +84,7 @@ class LoopTile : Tile
 		/* Draw the progress */
 		Colours.set_context_rgb(context, Colours.LIGHT_BLUE);
 		context.set_line_join(Cairo.LineJoin.MITER);
-		
+
 		context.new_path();
 		context.move_to(x + TILE_CORNER_RADIUS, y + TILE_HEIGHT);
 

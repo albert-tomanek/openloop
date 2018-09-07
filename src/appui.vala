@@ -1,7 +1,5 @@
 class OpenLoop.AppUI
 {
-	private weak App app;
-
 	private Gtk.ApplicationWindow root;
 	private Gtk.Paned paned;
 
@@ -9,15 +7,14 @@ class OpenLoop.AppUI
 	private GUI.TileGrid tile_grid;
 	private GUI.BottomBar bottom_bar;
 
-	public AppUI (App app)
+	public AppUI ()
 	{
-		this.app = app;
 	}
 
-	public void create ()
+	public void create (Gtk.Application instance)
 	{
 		/* Create window */
-		this.root = new Gtk.ApplicationWindow (this.app);
+		this.root = new Gtk.ApplicationWindow (instance);
 		this.root.title = "Loops";
 
 		{
@@ -25,7 +22,7 @@ class OpenLoop.AppUI
 			grid.orientation = Gtk.Orientation.VERTICAL;
 
 			{
-				this.source_list = new GUI.LoopSourceList(this.app);
+				this.source_list = new GUI.LoopSourceList();
 				this.source_list.set_size_request(130, -1);
 				this.tile_grid = new GUI.TileGrid(4, 3);
 
@@ -37,7 +34,7 @@ class OpenLoop.AppUI
 			}
 
 			{
-				this.bottom_bar = new GUI.BottomBar(this.app);
+				this.bottom_bar = new GUI.BottomBar();
 				grid.add(this.bottom_bar);
 			}
 
@@ -75,6 +72,6 @@ class OpenLoop.AppUI
 			chooser.destroy();
 		}
 
-		this.app.ui.source_list.add_path(path);
+		App.ui.source_list.add_path(path);
 	}
 }

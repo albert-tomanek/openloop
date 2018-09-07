@@ -1,13 +1,11 @@
 class OpenLoop.GUI.LoopSourceList : Granite.Widgets.SourceList
 {
-	private weak OpenLoop.App app;
-
 	public Gee.ArrayList<Loop> loops = new Gee.ArrayList<Loop>();
 
-	public LoopSourceList(OpenLoop.App instance)
+	public LoopSourceList()
 	{
 		base();
-		this.app = instance;
+		this.ellipsize_mode = Pango.EllipsizeMode.START;
 
 		/* Drag and Drop source */
 		this.enable_drag_source(TileHost.gtk_targetentries);
@@ -15,7 +13,7 @@ class OpenLoop.GUI.LoopSourceList : Granite.Widgets.SourceList
 		/* Test sample */
 		{
 			var test_loop = new Loop(OpenLoop.Audio.Sample.load_raw("../media/wicked dub_f32s.raw", 44100, 2));
-			var test_loop_item = new LoopSourceItem("", this.app.pipeline, "Test Loop");
+			var test_loop_item = new LoopSourceItem("", "Test Loop");
 			test_loop_item.loop = test_loop;
 			this.root.add(test_loop_item);
 		}
@@ -23,7 +21,7 @@ class OpenLoop.GUI.LoopSourceList : Granite.Widgets.SourceList
 
 	public void add_path(string path)
 	{
-		var item = new LoopSourceItem(path, this.app.pipeline);
+		var item = new LoopSourceItem(path);
 		this.root.add(item);
 	}
 }
@@ -33,13 +31,10 @@ class OpenLoop.GUI.LoopSourceItem : Granite.Widgets.SourceList.Item, Granite.Wid
 	public string file_path;
 	public Loop?  loop = null;			// A reference to the loop if it has already been loaded from a file. TODO: This reference the loop sample in memory, even if it is not being played anywhere.
 
-	private OpenLoop.AppPipeline _pipeline;		// TODO: Uhh. Why can't we access the parent SourceList to get the pipeline when we `prepare_selection_data`?
-
-	public LoopSourceItem(string path, OpenLoop.AppPipeline pipeline, string? name = null)
+	public LoopSourceItem(string path, string? name = null)
 	{
 		base(name ?? path);
 		this.file_path = path;
-		this._pipeline = pipeline;
 	}
 
 	public bool draggable()
@@ -57,7 +52,7 @@ class OpenLoop.GUI.LoopSourceItem : Granite.Widgets.SourceList.Item, Granite.Wid
 		}
 
 		/* Create a new tile with this loop */
-		Tile tile = new LoopTile(this._pipeline, this.loop);
+		Tile tile = new LoopTile(this.loop);
 		tile.pipeline.add(tile.gst_element);
 		tile.@ref();	// We need to manually increase the reference cound of the tile because Vala doesn't know that we're keeping a pointer to it when we send it over to the other widget.
 

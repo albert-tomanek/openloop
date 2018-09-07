@@ -1,9 +1,7 @@
-weak OpenLoop.AppPipeline app_pipeline;
-
 class OpenLoop.App : Gtk.Application
 {
-	internal AppUI ui;
-	internal AppPipeline pipeline;		// The GStreamer pipeline that all tiles feed their audio into.
+	public static AppUI ui;
+	public static AppPipeline pipeline;		// The GStreamer pipeline that all tiles feed their audio into.
 
     public App ()
 	{
@@ -12,15 +10,14 @@ class OpenLoop.App : Gtk.Application
             flags: ApplicationFlags.FLAGS_NONE
         );
 
-		this.ui = new AppUI(this);
-		this.pipeline = new AppPipeline();
-		app_pipeline = this.pipeline;
-		this.pipeline.error.connect((msg) => { stderr.printf(msg); });
+		App.ui = new AppUI();
+		App.pipeline = new AppPipeline();
+		App.pipeline.error.connect((msg) => { stderr.printf(msg); });
     }
 
     protected override void activate ()
 	{
-		this.ui.create();
+		App.ui.create(this);
     }
 
     public static int main (string[] args)
