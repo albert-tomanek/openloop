@@ -34,8 +34,6 @@ class OpenLoop.GUI.TileHost : Gtk.DrawingArea
 		this.button_release_event.connect(this.on_click);
 
 		/* Drag and Drop */
-		Gtk.drag_source_set(this, Gdk.ModifierType.BUTTON1_MASK, TileHost.gtk_targetentries, Gdk.DragAction.MOVE);
-
 		this.drag_begin.connect(this.on_drag_begin);
 		this.drag_end.connect(this.on_drag_end);
 		this.drag_data_get.connect(this.on_drag_data_get);
@@ -51,12 +49,16 @@ class OpenLoop.GUI.TileHost : Gtk.DrawingArea
 
 	public void attach(Tile tile)
 	{
+		Gtk.drag_source_set(this, Gdk.ModifierType.BUTTON1_MASK, TileHost.gtk_targetentries, Gdk.DragAction.MOVE);
+
 		this.tile = tile;
 		tile.host = this;
 	}
 
 	public void release()
 	{
+		Gtk.drag_source_unset(this);
+
 		this.tile.host = null;
 		this.tile = null;
 	}

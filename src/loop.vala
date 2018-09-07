@@ -37,8 +37,8 @@ class OpenLoop.Loop
 			pipeline.set_state(Gst.State.PLAYING);
 //			pipeline.get_bus().message.connect((msg) => {print(Gst.MessageType.get_name(msg.type)+"\n"); if (msg.type == Gst.MessageType.ERROR) {Error error;string dbg; msg.parse_error(out  error, out dbg); print(error.message+"\n"+dbg+"\n");} });
 
-			pipeline.get_bus().poll(Gst.MessageType.EOS, Gst.CLOCK_TIME_NONE);
-			print("Loading finished.\n");
+			pipeline.get_bus().poll(Gst.MessageType.EOS, Gst.CLOCK_TIME_NONE);	// Wait for the stream to end.
+
 			pipeline.set_state(Gst.State.NULL);
 		}
 

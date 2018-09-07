@@ -14,8 +14,13 @@ class OpenLoop.GUI.LoopSourceList : Granite.Widgets.SourceList
 	public void add_path(string path)
 	{
 		var item = new LoopSourceItem(path);
+
+		/* Add it to the SourceList */
 		this.root.add(item);
-		item.loop = Loop.import_path(path);
+
+		/* Queue for the sample to be loaded */
+		App.threads.loop_importer.queue.add(item);
+		item.load_pending();
 	}
 }
 
@@ -24,6 +29,9 @@ class OpenLoop.GUI.LoopSourceItem : Granite.Widgets.SourceList.Item, Granite.Wid
 	public string file_path;
 	public Loop?  loop = null;			// A reference to the loop if it has already been loaded from a file. TODO: This reference the loop sample in memory, even if it is not being played anywhere.
 
+	public signal void load_pending();	// Called when the item has been added to the queue of items to load.
+	public signal void load_finished();	// Called when the loop has been loaded.
+
 	public LoopSourceItem(string path, string? name = null)
 	{
 		base(name ?? path);
@@ -31,11 +39,31 @@ class OpenLoop.GUI.LoopSourceItem : Granite.Widgets.SourceList.Item, Granite.Wid
 
 		this.editable = true;
 		this.edited.connect((name) => {this.name = name;});
+
+		this.load_pending.connect(() => {
+			this.icon = Icon.new_for_string("document-send-symbolic");
+		});
+
+		this.load_finished.connect(() => {
+			this.icon = null;
+		});
+	}
+
+	~LoopSourceItem()
+	{
+		App.threads.loop_importer.queue.remove(this);
 	}
 
 	public bool draggable()
 	{
-		return true;
+		if (this.loop == null)
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
 	}
 
 	public void prepare_selection_data (Gtk.SelectionData selection_data)

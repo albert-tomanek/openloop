@@ -1,5 +1,6 @@
 class OpenLoop.App : Gtk.Application
 {
+	public static AppThreads threads = new AppThreads();
 	public static MainWindow ui;
 	public static AppPipeline pipeline;		// The GStreamer pipeline that all tiles feed their audio into.
 
@@ -19,6 +20,11 @@ class OpenLoop.App : Gtk.Application
 
 		/* Default settings */
 		App.internal_fmt.set_format(Gst.Audio.Format.F32, 48000, 2, null);
+
+		/* Threads */
+		App.threads.start();
+
+		this.shutdown.connect(() => { App.threads.stop(); });
     }
 
     protected override void activate ()

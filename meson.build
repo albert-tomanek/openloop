@@ -25,6 +25,9 @@ executable('openloop',
 		'src/Audio/sampleplayer.c',
 		'src/Audio/samplesink.vapi',
 		'src/Audio/samplesink.c',
+
+		'src/Threads/threads.vala',
+		'src/Threads/loopimporter.vala',
 	],
 	dependencies: [
 		dependency('glib-2.0'),
