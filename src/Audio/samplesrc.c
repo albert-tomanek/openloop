@@ -7,7 +7,7 @@
 #include <gst/audio/audio.h>
 
 #include "sample.h"
-#include "sampleplayer.h"
+#include "samplesrc.h"
 
 #define DEFAULT_CHUNK_SIZE 1024
 
@@ -15,39 +15,29 @@
 // https://gstreamer.freedesktop.org/documentation/tutorials/basic/short-cutting-the-pipeline.html
 // http://amarghosh.blogspot.cz/2012/01/gstreamer-appsrc-in-action.html
 
+G_DEFINE_TYPE (SampleSrc, samplesrc, GST_TYPE_APP_SRC);
+
 /* Constructor and Destructor */
-SamplePlayer *sampleplayer_new (Sample *sample)
+void samplesrc_class_init(SampleSrcClass *cls)
 {
-	SamplePlayer *that = malloc(sizeof(SamplePlayer));
+}
+
+void samplesrc_init (SampleSrc *that)
+{
+	/* Don't use this. To create a new istance use `samplesrc_new`. */
+}
+
+SampleSrc *samplesrc_new (Sample *sample)
+{
+	SampleSrc *that = g_object_new(OPENLOOP_TYPE_SAMPLESRC, NULL);//(SampleSrc *) g_type_create_instance(OPENLOOP_TYPE_SAMPLESRC);
 
 	that->playing = false;
 
 	that->sample = sample;
 	that->playback_offset = 0;
 
-	/* Create the GStreamer elements */
-	that->bin        = gst_bin_new (NULL);
-	that->app_source = gst_element_factory_make ("appsrc", NULL);
-
-	/* Link them */
-	gst_bin_add_many (GST_BIN(that->bin), that->app_source, NULL);
-
-	/* We need to increment the bin's reference count from 1 to	*
-	 * 2 so that it is present for the whole lifetime of the	*
-	 * sampleplayer, even if the pipeline that will take		*
-	 * ownership of it (when it is added to one) is deleted.	*/
-
-	gst_object_ref(that->bin);
-
-	/* Create a ghost pad (pad proxy) for the src pad at the end of the bin, which outside elements can link to */
-	{
-		GstPad *src_pad = gst_element_get_static_pad (that->app_source, "src");
-		gst_element_add_pad (that->bin, gst_ghost_pad_new("src", src_pad));
-		gst_object_unref(GST_OBJECT (src_pad));
-	}
-
 	/* Set AppSrc callbacks */
-	g_signal_connect (that->app_source, "need-data", G_CALLBACK (sampleplayer_push_data), that);
+	g_signal_connect (that, "need-data", G_CALLBACK (samplesrc_push_data), that);
 
 	/* Configure our appsrc element */
 	{
@@ -57,29 +47,25 @@ SamplePlayer *sampleplayer_new (Sample *sample)
 		gst_audio_info_set_format (&info, GST_AUDIO_FORMAT_F32, (gint) that->sample->samplerate, (gint) that->sample->channels, NULL);
 		appsrc_caps = gst_audio_info_to_caps (&info);
 
-		g_object_set (that->app_source, "caps", appsrc_caps, "format", GST_FORMAT_TIME, NULL);
+		g_object_set (that, "caps", appsrc_caps, "format", GST_FORMAT_TIME, NULL);
 		gst_caps_unref(appsrc_caps);
 	}
 
 	return that;
 }
 
-void sampleplayer_free (SamplePlayer *that)
+void samplesrc_dispose (GObject *gobj)
 {
-	/* De-initialize all the elements in our bin */
-	gst_element_set_state (that->bin, GST_STATE_NULL);
+	SampleSrc *that = (SampleSrc *) gobj;
 
-	/* Decrement the reference count to 0 (unless any other references	*
-	 * to the bin exist), to free the bin and its elements.				*/
+	gst_element_set_state (GST_ELEMENT(that), GST_STATE_NULL);
 
-    gst_object_unref (that->bin);
-
-	free(that);
+	G_OBJECT_CLASS (samplesrc_parent_class)->dispose (gobj);
 }
 
 /* Other functions */
 
-void sampleplayer_push_data (GstElement *source, guint size, SamplePlayer *that)
+void samplesrc_push_data (GstElement *source, guint size, SampleSrc *that)
 {
 	/* that is called to push a chunk of	*
 	 * sample data into the appsrc.			*/
@@ -147,7 +133,7 @@ void sampleplayer_push_data (GstElement *source, guint size, SamplePlayer *that)
 	/* Push the buffer into the appsrc */
 	{
 		GstFlowReturn ret;
-		g_signal_emit_by_name (that->app_source, "push-buffer", buffer, &ret);
+		g_signal_emit_by_name (that, "push-buffer", buffer, &ret);
 
 		if (ret != GST_FLOW_OK)
 		{
@@ -163,28 +149,13 @@ void sampleplayer_push_data (GstElement *source, guint size, SamplePlayer *that)
 	return;
 }
 
-void sampleplayer_rewind (SamplePlayer *that)
+void samplesrc_rewind (SampleSrc *that)
 {
 	that->playback_offset = 0;
 }
 
 /* Properties */
-GstElement *sampleplayer_get_element (SamplePlayer *that)
-{
-	return that->bin;
-}
-
-float sampleplayer_get_progress (SamplePlayer *player)
+float samplesrc_get_progress (SampleSrc *player)
 {
 	return (float) player->playback_offset / (float) player->sample->size;
-}
-
-Sample *sampleplayer_get_sample (SamplePlayer *that)
-{
-	return that->sample;
-}
-
-uint64_t sampleplayer_get_playback_offset (SamplePlayer *that)
-{
-	return that->playback_offset;
 }

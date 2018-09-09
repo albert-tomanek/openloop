@@ -10,6 +10,7 @@ executable('openloop',
 		'src/section.vala',
 		'src/tile.vala',
 		'src/looptile.vala',
+		'src/metronome.vala',
 
 		'src/Views/mainwindow.vala',
 
@@ -21,8 +22,8 @@ executable('openloop',
 		'src/Audio/pipeline.vala',
 		'src/Audio/sample.vapi',
 		'src/Audio/sample.c',
-		'src/Audio/sampleplayer.vapi',
-		'src/Audio/sampleplayer.c',
+		'src/Audio/samplesrc.vapi',
+		'src/Audio/samplesrc.c',
 		'src/Audio/samplesink.vapi',
 		'src/Audio/samplesink.c',
 
@@ -37,6 +38,7 @@ executable('openloop',
 		dependency('granite'),
 		dependency('gstreamer-1.0'),
 		dependency('gstreamer-audio-1.0'),
+		dependency('gstreamer-app-1.0'),
 	],
 	include_directories: include_directories('src/Audio/'),	# We need to tell the C compiler where it can find the headers that the .vapi's refer to
 	c_args: [

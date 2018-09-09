@@ -3,14 +3,14 @@ using OpenLoop;
 class LoopTile : Tile
 {
 	private Loop loop;
-	public  Audio.SamplePlayer player;
+	public  Audio.SampleSrc player;
 
 	private float[] repr;	// A visual representation of the sample as values between -1 and 1 (?)
 
 	public LoopTile (OpenLoop.Loop loop)
 	{
 		this.loop = loop;
-		this.player = new Audio.SamplePlayer (this.loop.orig_sample);
+		this.player = new Audio.SampleSrc (this.loop.orig_sample);
 
 		/* Generate the sample's visual representation */
 		this.repr = this.loop.orig_sample.visual_repr (TILE_WIDTH);
@@ -26,7 +26,7 @@ class LoopTile : Tile
 		this.player.playing = false;
 	}
 
-	public override Gst.Element? gst_element { get { return this.player.gst_element; } }
+	public override Gst.Element? gst_element { get { return this.player; } }
 
 	public override bool playing { get { return this.player.playing; } }
 
