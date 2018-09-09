@@ -16,6 +16,7 @@ executable('openloop',
 
 		'src/Widgets/loopsourcelist.vala',
 		'src/Widgets/bottombar.vala',
+		'src/Widgets/metronomectl.vala',
 		'src/Widgets/tilegrid.vala',
 		'src/Widgets/tilehost.vala',
 

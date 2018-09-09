@@ -4,6 +4,8 @@ class OpenLoop.App : Gtk.Application
 	public static MainWindow ui;
 	public static AppPipeline pipeline;		// The GStreamer pipeline that all tiles feed their audio into.
 
+	public static Metronome metronome;
+
 	/* Audio settings */
 	public static Gst.Audio.Info internal_fmt = new Gst.Audio.Info();
 
@@ -17,6 +19,8 @@ class OpenLoop.App : Gtk.Application
 		App.ui = new MainWindow();
 		App.pipeline = new AppPipeline();
 		App.pipeline.error.connect((msg) => { stderr.printf(msg); });
+
+		App.metronome = new Metronome();
 
 		/* Default settings */
 		App.internal_fmt.set_format(Gst.Audio.Format.F32, 48000, 2, null);

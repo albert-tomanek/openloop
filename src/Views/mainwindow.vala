@@ -1,11 +1,14 @@
 class OpenLoop.MainWindow
 {
-	private Gtk.ApplicationWindow root;
-	private Gtk.Paned paned;
+	public Gtk.ApplicationWindow root;
+	public Gtk.Paned paned;
 
-	private GUI.LoopSourceList source_list;
-	private GUI.TileGrid tile_grid;
-	private GUI.BottomBar bottom_bar;
+	public GUI.LoopSourceList source_list;
+	public GUI.TileGrid tile_grid;
+	public GUI.BottomBar bottom_bar;
+
+	public Gtk.HeaderBar hbar;
+	public GUI.MetronomeControl hbar_metronomectl;
 
 	public MainWindow ()
 	{
@@ -15,8 +18,19 @@ class OpenLoop.MainWindow
 	{
 		/* Create window */
 		this.root = new Gtk.ApplicationWindow (instance);
-		this.root.title = "Loops";
 
+		/* HeaderBar */
+		{
+			this.hbar = new Gtk.HeaderBar();
+			this.hbar.title = "OpenLoop";
+			this.hbar.show_close_button = true;
+			this.root.set_titlebar(this.hbar);
+
+			this.hbar_metronomectl = new GUI.MetronomeControl(App.metronome);
+			this.hbar.pack_start(this.hbar_metronomectl);
+		}
+
+		/* Window Contents */
 		{
 			var grid = new Gtk.Grid();
 			grid.orientation = Gtk.Orientation.VERTICAL;
@@ -33,6 +47,7 @@ class OpenLoop.MainWindow
 				grid.add(this.paned);
 			}
 
+			/* ActionBar */
 			{
 				this.bottom_bar = new GUI.BottomBar();
 				grid.add(this.bottom_bar);
@@ -59,7 +74,7 @@ class OpenLoop.MainWindow
 				filter.add_mime_type(mime);
 			}
 
-			//chooser.add_filter(filter);	// Don't add the filter yet as we can still ony load raw sample files.
+			chooser.add_filter(filter);
 
 			var rc = chooser.run();
 			if (rc != Gtk.ResponseType.ACCEPT)
