@@ -1,6 +1,6 @@
 class OpenLoop.AppPipeline
 {
-	private Gst.Pipeline pipeline;
+	public Gst.Pipeline pipeline;
 
 	private Gst.Element mixer;
 	private Gst.Element audioconvert;

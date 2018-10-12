@@ -49,12 +49,12 @@ SampleSrc *samplesrc_new (Sample *sample);
 void samplesrc_dispose (GObject *gobj);
 
 void samplesrc_push_data (GstElement *source, guint size, SampleSrc *that);	// Callback to push data (either silence or samples) into the AppSrc element. No reason to call this from Vala.
+
+void samplesrc_start  (SampleSrc *player);
+void samplesrc_stop   (SampleSrc *player);
 void samplesrc_rewind (SampleSrc *player);
 
 /* Properties */
 float      samplesrc_get_progress (SampleSrc *player);		// Returns how far the player is through the sample as a float between 0 and 1.0
-Sample    *samplesrc_get_sample (SampleSrc *player);
-uint64_t   samplesrc_get_playback_offset (SampleSrc *player);
-
 
 G_END_DECLS

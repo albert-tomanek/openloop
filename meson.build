@@ -11,6 +11,7 @@ executable('openloop',
 		'src/tile.vala',
 		'src/looptile.vala',
 		'src/metronome.vala',
+		'src/eyecandy.vala',
 
 		'src/Views/mainwindow.vala',
 
@@ -40,6 +41,8 @@ executable('openloop',
 		dependency('gstreamer-1.0'),
 		dependency('gstreamer-audio-1.0'),
 		dependency('gstreamer-app-1.0'),
+
+		meson.get_compiler('c').find_library('m')	# libm; maths library
 	],
 	include_directories: include_directories('src/Audio/'),	# We need to tell the C compiler where it can find the headers that the .vapi's refer to
 	c_args: [
@@ -48,5 +51,6 @@ executable('openloop',
 		'-Wno-unused-but-set-variable',
 		'-Wno-unused-variable',
 		'-Wno-unused-function',
+		'-lm',
 	],
 )

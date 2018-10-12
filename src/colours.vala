@@ -2,6 +2,7 @@ struct OpenLoop.Colours
 {
 	static uint32 LIGHT_BLUE = 0x38acffff;
 	static uint32 DARK_BLUE  = 0x124780ff;
+	static uint32 BLACK      = 0x101010ff;
 
 	public static void set_context_rgb(Cairo.Context context, uint32 colour)
 	{

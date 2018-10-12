@@ -27,7 +27,7 @@ class OpenLoop.MainWindow
 			this.root.set_titlebar(this.hbar);
 
 			this.hbar_metronomectl = new GUI.MetronomeControl(App.metronome);
-			this.hbar.pack_start(this.hbar_metronomectl);
+			this.hbar.pack_end(this.hbar_metronomectl);
 		}
 
 		/* Window Contents */

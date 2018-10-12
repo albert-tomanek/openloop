@@ -100,6 +100,8 @@ void samplesrc_push_data (GstElement *source, guint size, SampleSrc *that)
 	GstBuffer *buffer = gst_buffer_new();
 	GstMemory *sample_data;					// Points to the Gstmemory object containing the final sample data that we'll push
 
+	GST_BUFFER_DURATION(buffer) = (num_frames * GST_SECOND) / that->sample->samplerate;
+
 	if (that->playing)
 	{
 		/* If we are playing, send memory containing the samples */
@@ -108,11 +110,17 @@ void samplesrc_push_data (GstElement *source, guint size, SampleSrc *that)
 		/* Increment the playback offset, now that these samples will be played */
 		that->playback_offset += num_frames * frame_size;
 
-		GST_BUFFER_OFFSET (buffer)     = that->playback_offset;
-		GST_BUFFER_OFFSET_END (buffer) = that->playback_offset + chunk_size;		// The offset in the file of the end of that BUFFER
+		// {
+		// 	GstClock *clock = gst_element_get_clock(GST_ELEMENT(that));
+		// 	//printf("%p\t%llu\n", clock, time(NULL));
+		// 	GST_BUFFER_PTS(buffer) = gst_clock_get_time(clock);
+		// 	gst_object_unref(clock);
+		// }
 	}
 	else
 	{
+		/* If we're asked for sample data while we're not playing, send silence. */
+
 		sample_data = gst_allocator_alloc(NULL, chunk_size, NULL);
 
 		/* We need to initialize all of the samples to 0 (/silence), since the sample is not playing */
@@ -147,6 +155,20 @@ void samplesrc_push_data (GstElement *source, guint size, SampleSrc *that)
 	gst_buffer_unref (buffer);
 
 	return;
+}
+
+void samplesrc_start (SampleSrc *that)
+{
+	that->playing = true;
+
+	/* Flush the pipeline */
+	gst_element_send_event(GST_ELEMENT(that), gst_event_new_flush_start());
+	gst_element_send_event(GST_ELEMENT(that), gst_event_new_flush_stop(false));
+}
+
+void samplesrc_stop (SampleSrc *that)
+{
+	that->playing = false;
 }
 
 void samplesrc_rewind (SampleSrc *that)

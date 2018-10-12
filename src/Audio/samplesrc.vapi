@@ -10,6 +10,10 @@ class OpenLoop.Audio.SampleSrc : Gst.App.Src
 	[CCode (cname = "samplesrc_new")]
 	public SampleSrc (OpenLoop.Audio.Sample sample);
 
+	[CCode (cname = "samplesrc_start")]
+	public void start ();
+	[CCode (cname = "samplesrc_stop")]
+	public void stop ();
 	[CCode (cname = "samplesrc_rewind")]
 	public void rewind ();
 

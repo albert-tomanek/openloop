@@ -3,12 +3,13 @@ class OpenLoop.Metronome
 	public uint bpm = 120;
 
 	public signal void beat();
+	public Gst.ClockTime last_beat;
 
 	/* Threads */
 	Thread<void *> thread;
 
 	/* Audible */
-	public  bool sound = true;
+	public  bool sound = false;
 	private Audio.Sample click_smpl = Audio.Sample.load_raw("../media/click", 44100, 1);
 
 	private Gst.Pipeline gst_pipeline;
@@ -52,11 +53,26 @@ class OpenLoop.Metronome
 	{
 		while (App.threads.running)
 		{
-			this.beat();
+			//this.beat();
+
+			print(@"$(App.pipeline.pipeline.get_clock().get_time() - this.last_beat)\n");
+			this.last_beat = App.pipeline.pipeline.get_clock().get_time();
 
 			Thread.usleep(1000 * (60000 / this.bpm));
 		}
 
 		return null;
+	}
+
+	public Gst.ClockTime beat_duration {
+		get {
+			return (60 * Gst.SECOND) / this.bpm;
+		}
+	}
+
+	public float beat_progress {
+		get {
+			return (float) (App.pipeline.pipeline.get_clock().get_time() - this.last_beat) / (float) this.beat_duration;
+		}
 	}
 }

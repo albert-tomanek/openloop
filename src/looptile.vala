@@ -18,12 +18,12 @@ class LoopTile : Tile
 
 	public override void start ()
 	{
-		this.player.playing = true;
+		this.player.start();
 	}
 
 	public override void stop ()
 	{
-		this.player.playing = false;
+		this.player.stop();
 	}
 
 	public override Gst.Element? gst_element { get { return this.player; } }
@@ -82,9 +82,9 @@ class LoopTile : Tile
 	private static void draw_progress (LoopTile tile, Cairo.Context context, uint16 x, uint16 y)
 	{
 		/* Draw the progress */
-		Colours.set_context_rgb(context, Colours.LIGHT_BLUE);
+		Colours.set_context_rgb(context, (Colours.LIGHT_BLUE & 0xffffff00) | (uint32) (0xff * Eyecandy.get_highlight_intensity()));
 		context.set_line_join(Cairo.LineJoin.MITER);
-
+		//print(@"$(Eyecandy.get_highlight_intensity().to_string())\n");
 		context.new_path();
 		context.move_to(x + TILE_CORNER_RADIUS, y + TILE_HEIGHT);
 
@@ -104,6 +104,6 @@ class LoopTile : Tile
 
 	public override void draw_border (Cairo.Context context, uint16 x, uint16 y)
 	{
-		this.draw_border_with_colour(context, x, y, Colours.LIGHT_BLUE);
+		this.draw_border_with_colour(context, x, y, Colours.BLACK);
 	}
 }

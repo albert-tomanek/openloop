@@ -25,7 +25,7 @@ class OpenLoop.GUI.MetronomeControl : Gtk.Box
 		this.snd_button.toggled.connect(() => { this.metronome.sound = this.snd_button.active; });
 		this.add(this.snd_button);
 
-		this.bpm_spinbut = new Gtk.SpinButton.with_range(0, 255, 1);
+		this.bpm_spinbut = new Gtk.SpinButton.with_range(1, 256, 1);
 		this.bpm_spinbut.value = this.metronome.bpm;
 		this.bpm_spinbut.value_changed.connect(() => { this.metronome.bpm = (uint) this.bpm_spinbut.value; });
 		this.add(this.bpm_spinbut);
