@@ -57,6 +57,12 @@ class OpenLoop.MainWindow
 		}
 
 		this.root.show_all ();
+		
+		if (App.dev_mode)
+		{
+			var metinfo = new Views.MetronomeInfo();
+			metinfo.show();
+		}
 	}
 
 	/* Various actions */

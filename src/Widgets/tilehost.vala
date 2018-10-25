@@ -79,18 +79,18 @@ class OpenLoop.GUI.TileHost : Gtk.DrawingArea
 					{
 						/* Control-click to select */
 						if (this.tile != null)
-							this.tile.selected = !this.tile.selected;
+							this.tile.selection = !this.tile.selection;
 					}
 					else
 					{
 						/* Normal click to stop/start */
 						if (this.tile.playing)
 						{
-							this.tile.stop();
+							App.schedule(new ScheduledEvents.TileStopEvent(this.tile));
 						}
 						else
 						{
-							this.tile.start();
+							App.schedule(new ScheduledEvents.TileStartEvent(this.tile));
 						}
 					}
 				}
@@ -112,12 +112,17 @@ class OpenLoop.GUI.TileHost : Gtk.DrawingArea
 		{
 			var item_delete_tile = new Gtk.MenuItem.with_mnemonic("_Delete tile");
 			item_delete_tile.activate.connect(() => {
-				foreach (Tile tile in this.grid.get_selection(this.tile))
+				/* Delete everything in the selection */
+				foreach (Tile tile in this.grid.selection)
 				{
 					tile.die();
 				}
 
-				this.grid.selected.clear();
+				this.grid.selection.clear();
+
+				/* Delete our tile if it wasn't in the selection */
+				if (this.tile != null)
+					this.tile.die();
 			});
 			context_menu.append(item_delete_tile);
 
@@ -224,7 +229,7 @@ class OpenLoop.GUI.TileHost : Gtk.DrawingArea
 		{
 			this.tile.draw(context, TILE_BORDER_WIDTH + TILE_BORDER_OFFSET, TILE_BORDER_WIDTH + TILE_BORDER_OFFSET);
 
-			if (this.tile.selected)
+			if (this.tile.selection)
 				this.tile.draw_border(context, TILE_BORDER_WIDTH + TILE_BORDER_OFFSET, TILE_BORDER_WIDTH + TILE_BORDER_OFFSET);
 		}
 		else

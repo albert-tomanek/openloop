@@ -12,6 +12,7 @@ executable('openloop',
 		'src/looptile.vala',
 		'src/metronome.vala',
 		'src/eyecandy.vala',
+		'src/sheduledevents.vala',
 
 		'src/Views/mainwindow.vala',
 
@@ -31,6 +32,8 @@ executable('openloop',
 
 		'src/Threads/threads.vala',
 		'src/Threads/loopimporter.vala',
+
+		'src/DevMode/metronomeinfo.vala',
 	],
 	dependencies: [
 		dependency('glib-2.0'),

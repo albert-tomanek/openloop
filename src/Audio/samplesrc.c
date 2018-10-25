@@ -78,8 +78,8 @@ void samplesrc_push_data (GstElement *source, guint size, SampleSrc *that)
 	if (that->playback_offset >= that->sample->size)
 	{
 		/* If we've got to the end of the sample */
-		that->playback_offset = 0;	// Reset playback
-		that->playing = false;		// Remember to end silence now that we've finished the sample
+		//that->playback_offset = 0;	// Reset playback
+		that->playing = false;
 	}
 
 	/* Calculate the size of the chunk we'll be sending */

@@ -17,13 +17,13 @@ abstract class OpenLoop.Tile : Object
 	public abstract void stop();
 	public abstract bool playing { get; }
 
-	public bool selected {
+	public bool selection {
 		get {
 			if (this.host != null)
 			{
 				if (this.host.grid != null)
 				{
-					return this.host.grid.selected.contains(this);
+					return this.host.grid.selection.contains(this);
 				}
 			}
 
@@ -34,13 +34,13 @@ abstract class OpenLoop.Tile : Object
 			{
 				if (this.host.grid != null)
 				{
-					if (value == true && !this.host.grid.selected.contains(this))
+					if (value == true && !this.host.grid.selection.contains(this))
 					{
-						this.host.grid.selected.add(this);
+						this.host.grid.selection.add(this);
 					}
 					else if (value == false)
 					{
-						this.host.grid.selected.remove(this);
+						this.host.grid.selection.remove(this);
 					}
 				}
 			}

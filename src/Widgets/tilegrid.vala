@@ -4,7 +4,7 @@ class OpenLoop.GUI.TileGrid : Gtk.Grid
 	private uint height;
 
 	public Gee.ArrayList<Section> sections = new Gee.ArrayList<Section>();
-	public Gee.ArrayList<weak Tile> selected = new Gee.ArrayList<weak Tile>();		// Has to be weak because if we try to destroy all the tiles in the selection then this will be keeping them alive.
+	public Gee.ArrayList<weak Tile> selection = new Gee.ArrayList<weak Tile>();		// Has to be weak because if we try to destroy all the tiles in the selection then this will be keeping them alive.
 
 	public TileGrid(uint width, uint height)
 	{
@@ -38,17 +38,5 @@ class OpenLoop.GUI.TileGrid : Gtk.Grid
 			print("Delete!\n");
 
 		return true;
-	}
-
-	public Gee.ArrayList<weak Tile> get_selection(Tile? clicked = null)		// The `clicked` argument can be used to add the tile that was right-clicked to the list, even if it wasn't selected.
-	{
-		var ret = new Gee.ArrayList<weak Tile>();
-
-		ret.add_all(this.selected);
-
-		if (clicked != null)
-			ret.add(clicked);
-
-		return ret;
 	}
 }
