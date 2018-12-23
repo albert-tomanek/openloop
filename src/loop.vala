@@ -5,12 +5,19 @@ class OpenLoop.Loop
 	/* Metadata */
 	public string name;
 
+	public GES.Asset asset;
+
 	/* Samples */
 	public Audio.Sample orig_sample;
 
 	public Loop (owned Audio.Sample sample)
 	{
 		this.orig_sample = (owned) sample;		// Take ownership of the sample -- it's being given to us to keep.
+	}
+
+	public Loop.from_asset(GES.Asset asset)
+	{
+		this.asset = asset;
 	}
 
 	public static Loop import_path(string path)

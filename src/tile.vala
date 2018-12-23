@@ -10,12 +10,13 @@ static uint16 TILE_SPACING = 4;
 abstract class OpenLoop.Tile : Object
 {
 	public weak GUI.TileHost? host;
+	public GES.Clip clip;
 
-	public abstract Gst.Element? gst_element { get; }
+	// public abstract Gst.Element? gst_element { get; }
 
-	public abstract void start();
-	public abstract void stop();
-	public abstract bool playing { get; }
+	// public abstract void start();
+	// public abstract void stop();
+	// public abstract bool playing { get; }
 
 	public bool selection {
 		get {
@@ -74,8 +75,8 @@ abstract class OpenLoop.Tile : Object
 		/* This should clear all references to the	*
 		 * tile and therefore cause it to be freed. */
 
-		this.gst_element.set_state(Gst.State.NULL);
-		App.pipeline.remove(this.gst_element);
+		//this.gst_element.set_state(Gst.State.NULL);
+		//App.pipeline.remove(this.gst_element);
 
 		if (this.host != null)
 			this.host.release();

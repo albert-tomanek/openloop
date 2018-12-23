@@ -10,25 +10,26 @@ class LoopTile : Tile
 	public LoopTile (OpenLoop.Loop loop)
 	{
 		this.loop = loop;
-		this.player = new Audio.SampleSrc (this.loop.orig_sample);
+		this.clip = this.loop.asset.extract as GES.Clip;
+		//this.player = new Audio.SampleSrc (this.loop.orig_sample);
 
 		/* Generate the sample's visual representation */
-		this.repr = this.loop.orig_sample.visual_repr (TILE_WIDTH);
+		//this.repr = this.loop.orig_sample.visual_repr (TILE_WIDTH);
 	}
 
-	public override void start ()
-	{
-		this.player.start();
-	}
+	// public override void start ()
+	// {
+	// 	this.player.start();
+	// }
+	//
+	// public override void stop ()
+	// {
+	// 	this.player.stop();
+	// }
+	//
+	//public override Gst.Element? gst_element { get { return this.player; } }
 
-	public override void stop ()
-	{
-		this.player.stop();
-	}
-
-	public override Gst.Element? gst_element { get { return this.player; } }
-
-	public override bool playing { get { return this.player.playing; } }
+	//public override bool playing { get { return this.player.playing; } }
 
 	public override void draw (Cairo.Context context, uint16 x, uint16 y)
 	{

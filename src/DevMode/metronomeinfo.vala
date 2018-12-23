@@ -27,7 +27,7 @@ class OpenLoop.Views.MetronomeInfo : Gtk.Window
 	private void update_beat_label()
 	{
 		this.beat_label.label = "%u / %u".printf(App.metronome.beat_no, App.metronome.bpb);
-		this.dur_label.label  = "Beat duration: %luus".printf((ulong) (App.pipeline.pipeline.get_pipeline_clock().get_time() - App.metronome.last_beat));
+		this.dur_label.label  = "Beat duration: %luus".printf((ulong) (App.pipeline.get_pipeline_clock().get_time() - App.metronome.last_beat));
 	}
 
 	private void update_bpm_label()

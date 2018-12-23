@@ -4,10 +4,15 @@ class OpenLoop.App : Gtk.Application
 
 	public static AppThreads threads = new AppThreads();
 	public static MainWindow ui;
-	public static AppPipeline pipeline;		// The GStreamer pipeline that all tiles feed their audio into.
+
+	public static GES.Pipeline pipeline;
+	public static GES.Timeline timeline;
+	public static GES.Project  ges_project;
 
 	public static Metronome metronome;
-	private static Gee.ArrayQueue<ScheduledEvents.Event> on_next_bar = new Gee.ArrayQueue<ScheduledEvents.Event>();	// Events that need to happen at the start of the next bar.
+	public static LivePlayback live_playback;
+
+	public bool playing { get; set; }
 
 	/* Audio settings */
 	public static Gst.Audio.Info internal_fmt = new Gst.Audio.Info();
@@ -20,8 +25,14 @@ class OpenLoop.App : Gtk.Application
         );
 
 		App.ui = new MainWindow();
-		App.pipeline = new AppPipeline();
-		App.pipeline.error.connect((msg) => { stderr.printf(msg); });
+
+		App.timeline = new GES.Timeline();
+		App.pipeline = new GES.Pipeline();
+		App.pipeline.set_timeline(App.timeline);
+		App.pipeline.set_state(Gst.State.PLAYING);
+		App.ges_project = App.timeline.get_asset() as GES.Project;
+
+		App.live_playback = new LivePlayback(App.timeline);
 
 		App.metronome = new Metronome();
 		App.metronome.bar.connect(this.on_bar);
@@ -40,27 +51,17 @@ class OpenLoop.App : Gtk.Application
 		App.ui.create(this);
     }
 
+	private void on_bar()
+	{
+	}
+
     public static int main (string[] args)
 	{
-		Gst.init(ref args);
 		Gtk.init(ref args);
+		Gst.init(ref args);
+		GES.init();
 
         var app = new App ();
         return app.run (args);
     }
-
-	private void on_bar()
-	{
-		foreach (ScheduledEvents.Event event in App.on_next_bar)
-		{
-			event.execute();
-		}
-
-		App.on_next_bar.clear();
-	}
-
-	public static void schedule(ScheduledEvents.Event event)
-	{
-		App.on_next_bar.add(event);
-	}
 }

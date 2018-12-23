@@ -4,10 +4,14 @@ class OpenLoop.Metronome : Object
 	public uint bpb { get; set; default = 4; }	// Beats per bar
 	public uint beat_no = 0;	// The beat number [1 .. bpb]. 0 for the initial beat to be the start of a bar.
 
+	public Gst.ClockTime beat_duration() { return (60 * Gst.SECOND) / this.bpm; }	// A GStreamer bug prevents us from making these properties.
+	public Gst.ClockTime bar_duration() { return this.beat_duration() * this.bpb; }
+
 	public signal void beat();
 	public signal void bar();
 
 	public Gst.ClockTime last_beat;
+	public Gst.ClockTime last_bar;
 
 	/* Threads */
 	Thread<void *> thread;
@@ -59,9 +63,12 @@ public static uint64 d;
 		while (App.threads.running)
 		{
 			//print(@"$(App.pipeline.pipeline.get_pipeline_clock().get_time() - this.last_beat)\n");
-			d=App.pipeline.pipeline.get_pipeline_clock().get_time();
+
+			this.last_beat = App.pipeline.get_pipeline_clock().get_time();
+
 			if (this.beat_no % this.bpb == 0)
 			{
+				this.last_bar = this.last_beat;
 				this.beat_no = 1;
 				this.bar();
 			}
@@ -72,22 +79,20 @@ public static uint64 d;
 
 			this.beat();
 
-			this.last_beat = App.pipeline.pipeline.get_pipeline_clock().get_time();
-print("%lu\n", (ulong) (last_beat - d));
 			Thread.usleep(1000 * (60000 / this.bpm));
 		}
 
 		return null;
 	}
 
-	public Gst.ClockTime beat_duration()
+	public Gst.ClockTime next_bar()
 	{
-		return (60 * Gst.SECOND) / this.bpm;
+		return this.last_bar + this.bar_duration();
 	}
 
 	public float beat_progress {
 		get {
-			return (float) (App.pipeline.pipeline.get_clock().get_time() - this.last_beat) / (float) this.beat_duration();
+			return (float) (App.pipeline.get_clock().get_time() - this.last_beat) / (float) this.beat_duration();
 		}
 	}
 }

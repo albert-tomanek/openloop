@@ -1,9 +1,12 @@
 class OpenLoop.GUI.TileHost : Gtk.DrawingArea
 {
 	public weak TileGrid grid;
-	public weak Section? section;
+	public weak Section section;
 
 	private Tile? tile = null;
+
+	public int column { get { return this.grid.sections.index_of(this.section); } }
+	public int row { get { return this.section.tile_hosts.index_of(this); } }
 
 	/* Gtk stuff */
 	public enum DndTargetType {
@@ -84,13 +87,17 @@ class OpenLoop.GUI.TileHost : Gtk.DrawingArea
 					else
 					{
 						/* Normal click to stop/start */
-						if (this.tile.playing)
+						if (/*this.tile.playing*/false)
 						{
-							App.schedule(new ScheduledEvents.TileStopEvent(this.tile));
+							//App.schedule(new ScheduledEvents.TileStopEvent(this.tile));
 						}
 						else
 						{
-							App.schedule(new ScheduledEvents.TileStartEvent(this.tile));
+							App.live_playback.add_clip(this.tile.clip);
+							this.tile.clip.start    = App.metronome.next_bar();
+							this.tile.clip.duration = App.metronome.bar_duration();
+							this.tile.clip.inpoint  = 0;
+							// App.schedule(new ScheduledEvents.TileStartEvent(this.tile));
 						}
 					}
 				}

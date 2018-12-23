@@ -19,8 +19,10 @@ class OpenLoop.GUI.LoopSourceList : Granite.Widgets.SourceList
 		this.root.add(item);
 
 		/* Queue for the sample to be loaded */
-		App.threads.loop_importer.queue.add(item);
-		item.load_pending();
+		// App.threads.loop_importer.queue.add(item);
+		// item.load_pending();
+
+		item.loop = new Loop.from_asset(App.ges_project.create_asset_sync("file://" + path, typeof(GES.UriClip)));
 	}
 }
 
@@ -68,16 +70,16 @@ class OpenLoop.GUI.LoopSourceItem : Granite.Widgets.SourceList.Item, Granite.Wid
 
 	public void prepare_selection_data (Gtk.SelectionData selection_data)
 	{
-		if (this.loop == null)
-		{
-			/* Load the loop if it hasn't been loaded yet. */
-			this.loop = Loop.import_path(this.file_path);
-			return;
-		}
-
+		// if (this.loop == null)
+		// {
+		// 	/* Load the loop if it hasn't been loaded yet. */
+		// 	this.loop = Loop.import_path(this.file_path);
+		// 	return;
+		// }
+		//
 		/* Create a new tile with this loop */
 		Tile tile = new LoopTile(this.loop);
-		App.pipeline.add(tile.gst_element);
+		//App.pipeline.add(tile.gst_element);
 		tile.@ref();	// We need to manually increase the reference cound of the tile because Vala doesn't know that we're keeping a pointer to it when we send it over to the other widget.
 
 		/* Send a pointer to it */

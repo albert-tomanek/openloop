@@ -1,5 +1,7 @@
 project('openloop', 'vala', 'c')
 
+add_project_arguments(['--vapidir', join_paths(meson.current_source_dir(), 'vapi')], language: 'vala')
+
 executable('openloop',
 	sources: [
 		'src/colours.vala',
@@ -11,8 +13,8 @@ executable('openloop',
 		'src/tile.vala',
 		'src/looptile.vala',
 		'src/metronome.vala',
+		'src/liveplayback.vala',
 		'src/eyecandy.vala',
-		'src/sheduledevents.vala',
 
 		'src/Views/mainwindow.vala',
 
@@ -44,6 +46,8 @@ executable('openloop',
 		dependency('gstreamer-1.0'),
 		dependency('gstreamer-audio-1.0'),
 		dependency('gstreamer-app-1.0'),
+		dependency('gstreamer-pbutils-1.0'),
+		dependency('gst-editing-services-1.0'),
 
 		meson.get_compiler('c').find_library('m')	# libm; maths library
 	],
@@ -56,4 +60,8 @@ executable('openloop',
 		'-Wno-unused-function',
 		'-lm',
 	],
+)
+
+run_target('fetch-vapi',
+	command: ['wget', '-P', 'vapi/', 'https://raw.githubusercontent.com/GNOME/vala/master/vapi/gst-editing-services-1.0.vapi']
 )
