@@ -1,3 +1,4 @@
+# OpenLoop
 OpenLoop is an effort to create a sample looping environment for elementaryOS.
 It is heavily inspired by the [Live Loops](https://support.apple.com/kb/PH24856?viewlocale=en_US&locale=en_US) feature of GarageBand
 
@@ -25,7 +26,7 @@ For the most usable version, reset to the third latest commit (ca579fd).
  * Metronome only starts on some occasions for some reason.
  * Audio only works on some runs.
 
-### Whishlist
+### Wishlist
 
  * Pitch-shifting/time-stretching samples (using `librubberband`)
  * MIDI sequencing (like in GarageBand's Live Loops)
