@@ -1,6 +1,6 @@
 # OpenLoop
 OpenLoop is an effort to create a sample looping environment for elementaryOS.
-It is heavily inspired by the [Live Loops](https://support.apple.com/kb/PH24856?viewlocale=en_US&locale=en_US) feature of GarageBand
+It is heavily inspired by the [Live Loops](https://support.apple.com/guide/garageband-ipad/live-loops-overview-chsca7ff9ced/ipados) feature of GarageBand
 
 The application consists of a list of audio samples which can be imported by the user, and a grid of tiles that these samples can be dragged and dropped onto.
 The starting and stopping of samples is synchronized using the metronome. When a sample on the grid is clicked, it is scheduled to start/stop playing at the start of the next bar.
